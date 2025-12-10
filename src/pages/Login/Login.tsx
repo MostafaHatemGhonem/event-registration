@@ -4,6 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 import type { User } from "../../types";
 
+interface LoginResponse {
+  token: string;
+  user: User;
+}
+
 interface LoginProps {
   setUser: (user: User) => void;
 }
@@ -17,17 +22,14 @@ function Login({ setUser }: LoginProps) {
     e.preventDefault();
 
     try {
-      const res = await api.post("/login", { email, password });
+      const res = await api.post<LoginResponse>("/login", { email, password });
 
-      // نحفظ التوكن
       localStorage.setItem("token", res.data.token);
 
-      // نحط بيانات المستخدم في الـ context
       setUser(res.data.user);
 
       console.log("Login success!", res.data);
 
-      // بعد اللوجين تقدر تحول المستخدم للـ admin
       navigate("/admin");
 
     } catch (error) {
